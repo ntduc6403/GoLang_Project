@@ -1,5 +1,5 @@
 
-*********************************Commands to Run This Project*********************************  
+*********************************Commands of This Project*********************************  
 
 **1. Build and Start the Project**  
 (*) **docker compose up -d --build**  
