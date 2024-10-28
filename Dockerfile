@@ -1,40 +1,38 @@
 # syntax=docker/dockerfile:1
-
 ##
 ## STEP 1 - BUILD
 ##
 
-# Use Alpine Go base image for the build stage
-FROM golang:1.20.2-alpine as builder
+# specify the base image to  be used for the application, alpine or ubuntu
+FROM golang:1.21.8-alpine as builder
 
-# Create a working directory inside the image
+# create a working directory inside the image
 WORKDIR /app
 
-# Copy go.mod and go.sum (if available) first to cache module downloads
-# Copy go.mod file into /app
-COPY go.mod .  
+# copy directory files i.e all files ending with .go
+COPY . .
 
-# Download dependencies before copying source code to cache the downloaded modules
-RUN go mod download
-
-# Copy the entire source code into the container (all Go files and subdirectories)
-# Copy the current directory contents into /app within the container
-COPY . .  
-
-# Compile the application with options to create the binary file in the /app directory
-# Compile the main.go file into a binary named /api
+# compile application
+# /api: directory stores binaries file
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init -g cmd/api/main.go
 RUN go build -o /api ./cmd/api/main.go
 
 ##
 ## STEP 2 - DEPLOY
 ##
+FROM alpine:latest
 
-# Use scratch, an empty image for production
-FROM scratch
+# Install ca-certificates and timezone
+RUN apk update
+RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 
-# Copy the binary file from the builder stage to the empty container
-# Copy the /api binary file into the empty container
-COPY --from=builder /api /api  
+# Set the timezone.
+ENV TZ=Asia/Ho_Chi_Minh
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Specify the binary to run when the container starts
+WORKDIR /app
+COPY --from=builder /api /api
+
 ENTRYPOINT ["/api"]
+

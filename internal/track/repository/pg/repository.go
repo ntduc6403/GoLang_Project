@@ -2,17 +2,17 @@ package pg
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/thinhhuy997/go-windows/internal/dbmodel"
 	"github.com/thinhhuy997/go-windows/internal/model"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
-	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
-func (repo implRepository) All(ctx context.Context, queryParams) ([]model.Track, error) {
+func (repo implRepository) All(ctx context.Context) ([]model.Track, error) {
 	// dbtracks, err := dbmodel.Tracks().All(ctx, repo.db)
-	dbtracks, err := dbmodel.Tracks(qm.Where("id > ?", 16)).All(ctx, repo.db)
+	dbtracks, err := dbmodel.Tracks().All(ctx, repo.db)
 	if err != nil {
 		repo.l.Errorf(ctx, "track.repository.All.dbm.All: %s", err)
 		return nil, err
@@ -30,6 +30,8 @@ func (repo implRepository) All(ctx context.Context, queryParams) ([]model.Track,
 			UpdatedAt: dbtrack.UpdatedAt.Time,
 		})
 	}
+
+	fmt.Println("=========TRACK===========", tracks)
 
 	return tracks, nil
 }

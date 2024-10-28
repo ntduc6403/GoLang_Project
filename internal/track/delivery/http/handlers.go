@@ -25,10 +25,9 @@ import (
 
 func (h handler) list(c *gin.Context) {
 	ctx := c.Request.Context()
-	fmt.Printf("queryParams:", c.Query("product"))
 	tracks, err := h.trackUC.All(ctx)
 	if err != nil {
-		h.l.Error(ctx, "track.handler.list.todoUC.All: %s", err)
+		h.l.Error(ctx, "track.handler.list.trackUC.All: %s", err)
 		response.ErrorWithMap(c, err, errMap)
 		return
 	}

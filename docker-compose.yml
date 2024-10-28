@@ -1,34 +1,34 @@
-# docker-compose.yml
-version: '3.8'
-
 services:
-  app:
-    image: golang:1.20.2-alpine   # Sử dụng image Go để build và chạy mã nguồn
-    container_name: go-app        # Đặt tên cho container
-    working_dir: /app             # Thiết lập thư mục làm việc bên trong container
-    volumes:
-      - .:/app                    # Bind toàn bộ thư mục hiện tại vào thư mục /app trong container
-      # - /app/vendor               # Cache dependencies tại thư mục /app/vendor (tuỳ chọn)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on: 
+      - database
     ports:
-      - "8080:8080"               # Mở cổng 8080 để truy cập ứng dụng từ host
-    command: ["sh", "-c", "go build -o /api ./cmd/api/main.go && ./api"]
-    # Chạy lệnh biên dịch và chạy ứng dụng trong container
-    # environment:
-    #   - GO111MODULE=on            # Tùy chọn cấu hình cho môi trường Go (nếu cần)
-    # depends_on:
-    #   - db                        # Khởi động dịch vụ database trước khi chạy app (nếu có)
+      - 9000:8080
+    expose:
+      - 8080
+    volumes:
+      - ./:/app
 
-  # db:
-  #   image: postgres:13            # Ví dụ dịch vụ PostgreSQL cho ứng dụng (nếu có)
-  #   container_name: go-db
-  #   environment:
-  #     POSTGRES_USER: admin
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: goapp
-  #   volumes:
-  #     - db_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
+  database:
+    image: bitnami/postgresql
+    restart: always
+    container_name: ${DATABASE_HOST}
+    env_file: ".env"
+    ports:
+      - "5454:5432"
+    expose:
+      - 5432
+    environment:
+      - POSTGRESQL_USERNAME=${DATABASE_USER}
+      - POSTGRESQL_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRESQL_DATABASE=${DATABASE_NAME}
+    volumes:
+      - db_data:/bitnami/postgresql
+      - ./create-dbs.sql:/docker-entrypoint-initdb.d/create-dbs.sql
 
-# volumes:
-#   db_data:
+volumes:
+  db_data:
