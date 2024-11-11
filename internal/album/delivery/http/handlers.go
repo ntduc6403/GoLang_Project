@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thinhhuy997/go-windows/internal/model"
 	"github.com/thinhhuy997/go-windows/pkg/response"
 )
 
@@ -131,3 +132,44 @@ func (h handler) detail(c *gin.Context) {
 
 // 	response.OK(c, nil)
 // }
+
+func (h handler) update(c *gin.Context) {
+    ctx := c.Request.Context()
+
+    var req addRequest // Giả sử bạn đã định nghĩa addRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        response.Error(c, errInvalidRequestBody)
+        return
+    }
+
+    input, err := req.toInput() // Chuyển đổi request thành input
+    if err != nil {
+        response.Error(c, err)
+        return
+    }
+
+    // Lấy ID từ URL
+    rawID := c.Param("id")
+    id, err := strconv.Atoi(rawID)
+    if err != nil {
+        response.Error(c, errInvalidID)
+        return
+    }
+
+    // Cập nhật album
+    album := model.Album{
+        ID:    id,
+        Title: input.Title,
+        Artist: input.Artist,
+   
+    }
+
+    if err := h.albumUC.Update(ctx, album); err != nil {
+        h.l.Error(ctx, "album.handler.update.albumUC.Update: %s", err)
+        response.ErrorWithMap(c, err, errMap)
+        return
+    }
+
+    response.OK(c, nil) // Trả về phản hồi thành công
+}
+

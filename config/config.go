@@ -10,7 +10,7 @@ type Config struct {
 }
 
 type PGConfig struct {
-	URL string `env:"PG_URL" envDefault:"postgres://postgres:postgres@database:5432/music_db?sslmode=disable"`
+	URL string `env:"PG_URL" envDefault:"postgres://postgres:postgres@127.0.0.1:5454/music_db?sslmode=disable"`
 }
 
 type DatabaseConfig struct {

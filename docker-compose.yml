@@ -1,17 +1,17 @@
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    depends_on: 
-      - database
-    ports:
-      - 9000:8080
-    expose:
-      - 8080
-    volumes:
-      - ./:/app
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   depends_on: 
+  #     - database
+  #   ports:
+  #     - 9000:8080
+  #   expose:
+  #     - 8080
+  #   volumes:
+  #     - ./:/app
 
   database:
     image: bitnami/postgresql

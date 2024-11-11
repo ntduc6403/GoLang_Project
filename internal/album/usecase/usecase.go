@@ -8,11 +8,10 @@ import (
 )
 
 type CreateInput struct {
-	Title	string
-	Artist	string
-	genre string
+	Title  string
+	Artist string
+	genre  string
 }
-
 
 func (uc implUsecase) List(ctx context.Context) ([]model.Album, error) {
 	albums, err := uc.repo.List(ctx)
@@ -28,12 +27,12 @@ func (uc implUsecase) List(ctx context.Context) ([]model.Album, error) {
 func (uc implUsecase) Create(ctx context.Context, input CreateInput) error {
 	now := time.Now()
 	m := model.Album{
-		Title: input.Title,
-		Artist: input.Artist,
-		Genre: input.genre,
+		Title:       input.Title,
+		Artist:      input.Artist,
+		Genre:       input.genre,
 		ReleaseDate: now,
-		CreatedAt: now,
-		UpdatedAt: now,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	if err := uc.repo.Create(ctx, m); err != nil {
@@ -42,6 +41,7 @@ func (uc implUsecase) Create(ctx context.Context, input CreateInput) error {
 
 	return nil
 }
+
 
 
 // Detail a album
@@ -55,4 +55,12 @@ func (uc implUsecase) Detail(ctx context.Context, id int) (model.Album, error) {
 	}
 
 	return album, nil
+}
+
+func (uc implUsecase) Update(ctx context.Context, album model.Album) error {
+	return uc.repo.Update(ctx, album)
+}
+
+func (uc implUsecase) Delete(ctx context.Context, id int) error {
+	return uc.repo.Delete(ctx, id)
 }

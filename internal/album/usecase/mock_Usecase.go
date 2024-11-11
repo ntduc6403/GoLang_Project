@@ -174,8 +174,7 @@ func (_c *MockUsecase_Delete_Call) RunAndReturn(run func(context.Context, int) e
 	return _c
 }
 
-// NewMockUsecase creates a new instance of MockUsecase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
+
 func NewMockUsecase(t interface {
 	mock.TestingT
 	Cleanup(func())

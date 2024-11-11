@@ -64,3 +64,10 @@ func (uc implUsecase) Detail(ctx context.Context, id int) (model.Track, error) {
 
 	return track, nil
 }
+
+func (uc implUsecase) Update(ctx context.Context, track model.Track) error {
+    return uc.repo.Update(ctx, track) // Gọi phương thức Update từ repository
+}
+func (uc implUsecase) Delete(ctx context.Context, id int) error {
+    return uc.repo.Delete(ctx, id) // Gọi phương thức Delete từ repository
+}

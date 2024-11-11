@@ -8,4 +8,6 @@ func (h handler) MapRoutes(r *gin.RouterGroup) {
 	r.GET("", h.list)
 	r.GET("/:id", h.detail)
 	r.POST("", h.add)
+	r.PUT("/:id", h.update)
+	r.DELETE("/:id", h.delete)
 }

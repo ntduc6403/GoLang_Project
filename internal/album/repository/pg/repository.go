@@ -2,7 +2,6 @@ package pg
 
 import (
 	"context"
-
 	"github.com/thinhhuy997/go-windows/internal/dbmodel"
 	"github.com/thinhhuy997/go-windows/internal/model"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -42,6 +41,7 @@ func (repo implRepository) Create(ctx context.Context, album model.Album) error 
 	wl := boil.Whitelist(
 		dbmodel.AlbumColumns.Title,
 		dbmodel.AlbumColumns.Artist,
+		dbmodel.AlbumColumns.Genre,
 	)
 
 	if err := dbm.Insert(ctx, repo.db, wl); err != nil {
@@ -51,6 +51,8 @@ func (repo implRepository) Create(ctx context.Context, album model.Album) error 
 
 	return nil
 }
+
+
 
 // Detail a album
 func (repo implRepository) Detail(ctx context.Context, id int) (model.Album, error) {
@@ -73,4 +75,35 @@ func (repo implRepository) Detail(ctx context.Context, id int) (model.Album, err
 
 	return album, nil
 }
+
+func (repo implRepository) Update(ctx context.Context, album model.Album) error {
+	dbAlbum := dbmodel.Album{
+		ID:    album.ID,
+		Title: album.Title,
+		Artist: album.Artist,
+
+	}
+
+	if _, err := dbAlbum.Update(ctx, repo.db, boil.Whitelist(
+		dbmodel.AlbumColumns.Title,
+		dbmodel.AlbumColumns.Artist,
+		dbmodel.AlbumColumns.Genre,
+	)); err != nil {
+		repo.l.Errorf(ctx, "album.repository.Update.dbm.Update %+v: %s", dbAlbum, err)
+		return err
+	}
+
+	return nil
+}
+
+func (repo implRepository) Delete(ctx context.Context, id int) error {
+	dbAlbum := &dbmodel.Album{ID: id}
+	_, err := dbAlbum.Delete(ctx, repo.db)
+	if err != nil {
+		repo.l.Errorf(ctx, "album.repository.Delete.dbm.Delete: %s", err)
+		return err
+	}
+	return nil
+}
+
 

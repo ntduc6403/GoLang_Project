@@ -24,4 +24,6 @@ type Repository interface {
 	All(ctx context.Context) ([]model.Track, error)
 	Create(ctx context.Context, track model.Track) error
 	Detail(ctx context.Context, id int) (model.Track, error)
+	Update(ctx context.Context, track model.Track) error
+	Delete(ctx context.Context, id int) error
 } 

@@ -80,3 +80,35 @@ func (repo implRepository) Detail(ctx context.Context, id int) (model.Track, err
 
 	return track, nil
 }
+
+func (repo implRepository) Update(ctx context.Context, track model.Track) error {
+    dbTrack := dbmodel.Track{
+        ID:          track.ID,
+        AlbumID:     track.AlbumId,
+        Title:       track.Title,
+		Duration: null.IntFrom(track.Duration),
+		TrackNumber: null.IntFrom(track.TrackNumber),
+    }
+
+    if _, err := dbTrack.Update(ctx, repo.db, boil.Whitelist(
+        dbmodel.TrackColumns.Title,
+        dbmodel.TrackColumns.Duration,
+        dbmodel.TrackColumns.TrackNumber,
+    )); err != nil {
+        repo.l.Errorf(ctx, "track.repository.Update.dbm.Update %+v: %s", dbTrack, err)
+        return err
+    }
+
+    return nil
+}
+func (repo implRepository) Delete(ctx context.Context, id int) error {
+    dbTrack := &dbmodel.Track{ID: id}
+
+    _, err := dbTrack.Delete(ctx, repo.db)
+    if err != nil {
+        repo.l.Errorf(ctx, "track.repository.Delete.dbm.Delete: %s", err)
+        return err
+    }
+
+    return nil
+}
